@@ -1,5 +1,6 @@
 import 'package:calculator/buttons.dart';
 import 'package:flutter/material.dart';
+import 'package:math_expressions/math_expressions.dart';
 
 void main() {
   runApp(const MyApp());
@@ -68,15 +69,15 @@ class _MyHomePageState extends State<MyHomePage> {
               child: Column(
                 children: [
                   Container(
-                    padding: const EdgeInsets.all(30),
-                    alignment: Alignment.center,
+                    padding: const EdgeInsets.fromLTRB(20, 70, 0, 0),
+                    alignment: Alignment.centerLeft,
                     child: Text(
                       userInput,
                       style: const TextStyle(fontSize: 20),
                     ),
                   ),
                   Container(
-                    padding: const EdgeInsets.all(5),
+                    padding: const EdgeInsets.fromLTRB(20, 30, 50, 0),
                     alignment: Alignment.bottomRight,
                     child: Text(
                       answer,
@@ -119,6 +120,17 @@ class _MyHomePageState extends State<MyHomePage> {
                       color: Colors.pink,
                       textcolor: Colors.white,
                     );
+                  } else if (index == buttons.length - 1) {
+                    return buttonn(
+                      buttonTapped: () {
+                        setState(() {
+                          equalpressed();
+                        });
+                      },
+                      buttontext: buttons[index],
+                      color: Color.fromARGB(255, 255, 147, 7),
+                      textcolor: Colors.white,
+                    );
                   } else {
                     return buttonn(
                       buttonTapped: () {
@@ -143,11 +155,22 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
     );
   }
-}
 
-bool isOperator(String x) {
-  if (x == '/' || x == 'x' || x == '-' || x == '+' || x == '=') {
-    return true;
+  bool isOperator(String x) {
+    if (x == '/' || x == 'x' || x == '-' || x == '+' || x == '=') {
+      return true;
+    }
+    return false;
   }
-  return false;
+
+  void equalpressed() {
+    String finalquestion = userInput;
+    finalquestion = finalquestion.replaceAll('x', "*");
+    Parser p = Parser();
+    Expression exp = p.parse(finalquestion);
+    ContextModel cm = ContextModel();
+    double res = exp.evaluate(EvaluationType.REAL, cm);
+
+    answer = res.toString();
+  }
 }
